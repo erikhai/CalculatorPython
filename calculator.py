@@ -1,5 +1,5 @@
 from tkinter import *
-
+import math
 
 
 def calculator():
@@ -8,7 +8,7 @@ def calculator():
     # Intialising the window
     window = Tk()
     window.title("Calculator")
-    window.configure(bg= "white") #Deafult light mode
+    window.configure(bg= "white") #Default light mode
     window_height = 400
     window_width = 600
     screen_width = window.winfo_screenwidth()
@@ -17,6 +17,48 @@ def calculator():
     y_cordinate = int((screen_height/2) - (window_height/2))
     window.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
     window.resizable(False, False)
+    
+    
+    global numbers, decimal_counter, decimal_press
+    numbers = 0
+    numbers = float(numbers)
+    decimal_press = False
+    decimal_counter = 0
+    # Entry box for displaying outputs
+   # Text widget for displaying outputs (read-only)
+    output_text = Text(window, width=20, height=5, state="disabled")  # Set the desired width and height
+    output_text.grid(row=0, column=0, columnspan=4,sticky="w")  # sticky="w" aligns the entry to the west (left)
+
+
+    # Function to update the output text
+    def update_output(value):
+        output_text.config(state=NORMAL)
+        output_text.delete(1.0, END)
+        output_text.insert(END, str(value))
+        output_text.config(state="disabled")
+
+    
+    def input_event(number: float, sign: bool, decimal: bool, decimal_pressed: bool):
+        global numbers, decimal_counter, decimal_press
+        if (sign):
+            numbers *= -1
+        elif (decimal):
+            if (decimal_counter == 0):
+                decimal_counter += 1
+                decimal_press = True
+
+        elif (decimal_pressed):       
+            
+          
+            result = number / 10 ** decimal_counter
+            decimal_counter += 1
+           
+            numbers += result
+        else:
+            numbers = numbers * (10) + number
+            
+     
+        update_output(numbers)                
 
     #Establishing the menu bar and its functionality
     def dark_mode():
@@ -28,17 +70,17 @@ def calculator():
             row = i // 3
             col = i % 3
             if (i == 9):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: print(f"Button +/- pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda: input_event(0, True, False, decimal_press))
             elif (i == 10):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: print(f"Button 0 pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda: input_event(0, False, False, decimal_press))
             elif (i == 11):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: print(f"Button . pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda: input_event(0, False, True, decimal_press))
             elif ((9 - i) % 3 == 1):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: print(f"Button {11 - i} pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: input_event(11 - i, False, False, decimal_press))
             elif ((9 - i) % 3 == 0):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: print(f"Button {7 - i} pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: input_event(7 - i, False, False, decimal_press))
             else:
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: print(f"Button {9 - i} pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "white", command=lambda i=i: input_event(9 - i, False, False, decimal_press))
             button.configure(bg="#333333")
             button.grid(row=row, column=col)
     def light_mode():
@@ -48,17 +90,17 @@ def calculator():
             row = i // 3
             col = i % 3
             if (i == 9):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: print(f"Button +/- pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda: input_event(0, True, False, decimal_press))
             elif (i == 10):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: print(f"Button 0 pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda: input_event(0, False, False, decimal_press))
             elif (i == 11):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: print(f"Button . pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda: input_event(0, False, True, decimal_press))
             elif ((9 - i) % 3 == 1):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: print(f"Button {11 - i} pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: input_event(11 - i, False, False, decimal_press))
             elif ((9 - i) % 3 == 0):
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: print(f"Button {7 - i} pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: input_event(7 - i, False, False, decimal_press))
             else:
-                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: print(f"Button {9 - i} pressed."))
+                button = Button(window, text=button_text, padx=20, pady=20, bg = "white", fg = "black", command=lambda i=i: input_event(9 - i, False, False, decimal_press))
             button.configure(bg="white")
             button.grid(row=row, column=col)
 
@@ -96,19 +138,19 @@ def calculator():
         
         
         if (i == 9):
-            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: print(f"Button +/- pressed."))
+            button = Button(window, text=button_text, padx=20, pady=20, command=lambda: input_event(0, True, False, decimal_press))
         elif (i == 10):
-            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: print(f"Button 0 pressed."))
+            button = Button(window, text=button_text, padx=20, pady=20, command=lambda: input_event(0, False, False, decimal_press))
         elif (i == 11):
-            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: print(f"Button . pressed."))
+            button = Button(window, text=button_text, padx=20, pady=20, command=lambda: input_event(0, False, True, decimal_press))
         elif ((9 - i) % 3 == 1):
-            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: print(f"Button {11 - i} pressed."))
+            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: input_event(11 - i, False, False, decimal_press))
         elif ((9 - i) % 3 == 0):
-            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: print(f"Button {7 - i} pressed."))
+            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: input_event(7 - i, False, False, decimal_press))
         else:
-            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: print(f"Button {9 - i} pressed."))
-            
-        button.grid(row=row, column=col)
+            button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: input_event(9 - i, False, False, decimal_press))
+                
+        button.grid(row= row, column=col+1)
 
     window.mainloop()
 
