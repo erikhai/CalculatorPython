@@ -10,7 +10,7 @@ def calculator():
     window.title("Calculator")
     window.configure(bg= "white") #Default light mode
     window_height = 400
-    window_width = 600
+    window_width = 370
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
     x_cordinate = int((screen_width/2) - (window_width/2))
@@ -26,7 +26,7 @@ def calculator():
     decimal_counter = 0
     # Entry box for displaying outputs
    # Text widget for displaying outputs (read-only)
-    output_text = Text(window, width=20, height = 5, state="disabled")  # Set the desired width and height
+    output_text = Text(window, width=30, height = 5, state="disabled")  # Set the desired width and height
     output_text.grid(row=0, column=0, columnspan=4,sticky="w")  # sticky="w" aligns the entry to the west (left)
 
 
@@ -164,9 +164,14 @@ def calculator():
                 
         button.grid(row= row + 1, column=col)
 
-
-    
-
+    basic_operations = [
+         "DEL", "AC", "  +  ", "  -  ", "  x  ", "  /  ", "ANS", " = "
+    ]
+    for i, button_text in enumerate(basic_operations):
+        row = i // 2 
+        col = i % 2
+        button = Button(window, text=button_text, padx=20, pady=20)
+        button.grid(row= row + 1, column=col + 3)
     
     
     window.mainloop()
