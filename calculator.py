@@ -1,6 +1,6 @@
 from tkinter import *
 import math
-
+import keyboard
 
 def calculator():
 
@@ -21,12 +21,12 @@ def calculator():
     
     global numbers, decimal_counter, decimal_press
     numbers = 0
-    numbers = float(numbers)
+    numbers = int(numbers)
     decimal_press = False
     decimal_counter = 0
     # Entry box for displaying outputs
    # Text widget for displaying outputs (read-only)
-    output_text = Text(window, width=20, height=5, state="disabled")  # Set the desired width and height
+    output_text = Text(window, width=20, height = 5, state="disabled")  # Set the desired width and height
     output_text.grid(row=0, column=0, columnspan=4,sticky="w")  # sticky="w" aligns the entry to the west (left)
 
 
@@ -38,6 +38,8 @@ def calculator():
         output_text.config(state="disabled")
 
     
+
+    
     def input_event(number: float, sign: bool, decimal: bool, decimal_pressed: bool):
         global numbers, decimal_counter, decimal_press
         if (sign):
@@ -46,6 +48,7 @@ def calculator():
             if (decimal_counter == 0):
                 decimal_counter += 1
                 decimal_press = True
+                numbers = float(numbers)
 
         elif (decimal_pressed):       
             
@@ -58,7 +61,16 @@ def calculator():
             numbers = numbers * (10) + number
             
      
-        update_output(numbers)                
+        update_output(numbers)      
+    def on_key_event(e):
+       
+        if (e.name == '1' or e.name == '2' or e.name == '3' or e.name == '4' or e.name == '5' or e.name == '6' or e.name == '7' or e.name == '8' or e.name == '9' or e.name == '0') and e.event_type == keyboard.KEY_UP:
+            input_event(int(e.name), False, False, decimal_press)
+        elif (e.name == '.'  or e.name == 'decimal') and e.event_type == keyboard.KEY_UP:
+            input_event(0, False, True, decimal_press)
+
+    # Hook for key events
+    keyboard.hook(on_key_event)          
 
     #Establishing the menu bar and its functionality
     def dark_mode():
@@ -133,7 +145,7 @@ def calculator():
     ]
     
     for i, button_text in enumerate(numbers_and_basic_properties):
-        row = i // 3
+        row = i // 3 
         col = i % 3
         
         
@@ -150,8 +162,13 @@ def calculator():
         else:
             button = Button(window, text=button_text, padx=20, pady=20, command=lambda i=i: input_event(9 - i, False, False, decimal_press))
                 
-        button.grid(row= row, column=col+1)
+        button.grid(row= row + 1, column=col)
 
+
+    
+
+    
+    
     window.mainloop()
 
 
