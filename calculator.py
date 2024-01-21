@@ -38,7 +38,9 @@ def calculator():
         output_text.config(state="disabled")
 
     
-
+    def calculator_operation(text: str):
+        print(text)
+        update_output(text)
     
     def input_event(number: float, sign: bool, decimal: bool, decimal_pressed: bool):
         global numbers, decimal_counter, decimal_press
@@ -116,6 +118,9 @@ def calculator():
             button.configure(bg="white")
             button.grid(row=row, column=col)
 
+
+
+
    
     
     menubar = Menu(window, background = "blue", fg="pink")
@@ -123,9 +128,9 @@ def calculator():
     menubar.add_cascade(label="File", menu = filemenu)
     filemenu.add_command(label="Guide to use the calculator")
     filemenu.add_separator()
-    filemenu.add_command(label= "Dark Mode", command = dark_mode)
-    filemenu.add_command(label= "Light Mode", command = light_mode)
-    filemenu.add_separator()
+    #filemenu.add_command(label= "Dark Mode", command = dark_mode)
+    #filemenu.add_command(label= "Light Mode", command = light_mode)
+    #filemenu.add_separator()
     filemenu.add_command(label= "Restart")
     
 
@@ -168,9 +173,13 @@ def calculator():
          "DEL", "AC", "  +  ", "  -  ", "  x  ", "  /  ", "ANS", " = "
     ]
     for i, button_text in enumerate(basic_operations):
-        row = i // 2 
+        row = i // 2
         col = i % 2
-        button = Button(window, text=button_text, padx=20, pady=20)
+        button = Button(window, text=button_text, padx=20, pady=20, command=lambda text=button_text: calculator_operation(text))
+        button.grid(row=row + 1, column=col + 3)
+
+            
+
         button.grid(row= row + 1, column=col + 3)
     
     
