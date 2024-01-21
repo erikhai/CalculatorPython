@@ -19,7 +19,7 @@ def calculator():
     window.resizable(False, False)
     
     
-    global numbers, decimal_counter, decimal_press
+    global total, decimal_counter, decimal_press, numbers
     numbers = 0
     numbers = int(numbers)
     decimal_press = False
