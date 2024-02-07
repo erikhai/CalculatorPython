@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import math
 import keyboard
 
@@ -19,7 +20,13 @@ def calculator():
     window.resizable(False, False)
     
     
-    global total, decimal_counter, decimal_press, numbers
+    global equals_pressed, total, decimal_counter, decimal_press, numbers, expression, prev_expression, operations, division_flag, subtraction_flag, multiplication_flag, boolean, addition_flag
+    boolean, equals_pressed = False, False
+    operations = False
+    division_flag, subtraction_flag, multiplication_flag, addition_flag = False, False, False, False
+    expression = ""
+    prev_expression = ""
+    total = 0
     numbers = 0
     numbers = int(numbers)
     decimal_press = False
@@ -39,18 +46,176 @@ def calculator():
 
     
     def calculator_operation(text: str):
-        print(text)
-        update_output(text)
+        global equals_pressed, boolean, numbers, decimal_counter, decimal_press, expression, prev_expression, total, operations, division_flag, subtraction_flag, multiplication_flag, addition_flag
+      
+        equals_pressed = False
+      
+        if (text == "  +  "):
+            if not addition_flag:
+                addition_flag = True
+                total = numbers
+            else:
+                total += numbers
+            expression = expression + " + "
+            
+            prev_expression = text
+            subtraction_flag = False
+            multiplication_flag = False
+            division_flag = False
+            operations = False
+            boolean = False
+            #"  x  ", "  /  ", "ANS", " = "
+        elif (text == "  -  "):
+            
+            if not subtraction_flag and total == 0:
+              
+                subtraction_flag = True
+                total = numbers
+                
+            else:
+                if boolean:
+
+                  
+                    total -= numbers
+                else:
+                    boolean = True
+            expression = expression + " - "
+            addition_flag = False
+            multiplication_flag = False
+            division_flag = False
+            operations = False
+            
+         
+            prev_expression = text
+        elif (text == "  x  "):
+            if not multiplication_flag:
+                multiplication_flag = True
+                
+            else:
+                total *= numbers
+
+            expression = expression + " x "
+            
+            subtraction_flag = False
+            addition_flag = False
+            division_flag = False
+            operations = False
+            boolean = False
+            prev_expression = text
+        elif (text == "  /  "):
+            if not division_flag:
+                operations = True
+                division_flag = True
+                total = numbers
+                
+            elif division_flag:
+                total /= numbers
+            else:
+                
+                if numbers == 0:
+                    messagebox.showerror("Division by 0 error", "You cannot divide by 0!!.")
+                    operations = False
+                    division_flag = False
+                    total = 0
+                    numbers = 0
+                    decimal_counter = 0
+                    decimal_press = False
+                    
+                    addition_flag = False
+                    subtraction_flag = False
+                    multiplication_flag = False
+                    division_flag = False
+                    operations = False
+                    boolean = False
+                    expression = " "
+                    update_output(expression)
+                    return None
+                
+            
+            expression = expression + " / "
+            prev_expression = text
+            subtraction_flag = False
+            multiplication_flag = False
+            addition_flag = False
+            
+        elif (text == "AC"):
+            operations = False
+            division_flag = False
+            total = 0
+            numbers = 0
+            decimal_counter = 0
+            decimal_press = False
+            addition_flag = False
+            subtraction_flag = False
+            multiplication_flag = False
+            division_flag = False
+            operations = False
+            boolean = False
+           
+            expression = " "
+            update_output(expression)
+            return None
+        elif (text == "ANS"):
+            expression = expression + " ANS "
+            numbers = total
+            update_output(expression)
+            return None
+            
+        elif (text == " = "):
+            equals_pressed = True
+            if prev_expression == "  +  ":
+                total += numbers
+            elif prev_expression == "  -  ":
+                
+                total -= numbers
+            elif prev_expression == "  x  ":
+                total *= numbers
+            elif prev_expression == "  /  ":
+                if numbers == 0:
+                    
+                    messagebox.showerror("Division by 0 error", "You cannot divide by 0!!.")
+                    operations = False
+                    division_flag = False
+                    total = 0
+                    numbers = 0
+                    decimal_counter = 0
+                    decimal_press = False
+                    update_output("")
+
+                    return None
+                total /= numbers
+            expression = str(total)
+            update_output(expression)
+    
+                    
+            return None
+        
+ 
+        update_output(expression)
+        numbers = 0
+        decimal_counter = 0
+        decimal_press = False
     
     def input_event(number: float, sign: bool, decimal: bool, decimal_pressed: bool):
-        global numbers, decimal_counter, decimal_press
+        global numbers, decimal_counter, decimal_press, expression, prev_expression, equals_pressed, total, subtraction_flag, multiplication_flag, division_flag, addition_flag
+        if equals_pressed:
+            total = 0
+            numbers = 0
+            decimal_counter = 0
+            decimal_press = False
+            expression = ""
+            subtraction_flag, multiplication_flag, division_flag, addition_flag = False, False, False, False
+            equals_pressed = False
+
         if (sign):
             numbers *= -1
+            expression = str(numbers)
         elif (decimal):
             if (decimal_counter == 0):
                 decimal_counter += 1
                 decimal_press = True
                 numbers = float(numbers)
+                expression += "."
 
         elif (decimal_pressed):       
             
@@ -59,14 +224,27 @@ def calculator():
             decimal_counter += 1
            
             numbers += result
+            expression += str(number)
         else:
             numbers = numbers * (10) + number
+            expression += str(number)
             
-     
-        update_output(numbers)      
+        
+        
+        update_output(expression)   
+          
     def on_key_event(e):
-       
-        if (e.name == '1' or e.name == '2' or e.name == '3' or e.name == '4' or e.name == '5' or e.name == '6' or e.name == '7' or e.name == '8' or e.name == '9' or e.name == '0') and e.event_type == keyboard.KEY_UP:
+        key_actions = {
+        '+': lambda: calculator_operation("  +  "),
+        '-': lambda: calculator_operation("  -  "),
+        '*': lambda: calculator_operation("  x  "),
+        '/': lambda: calculator_operation("  /  "),
+        'c': lambda: calculator_operation("AC"),
+        '=': lambda: calculator_operation(" = ")
+    }
+        if e.name in key_actions and e.event_type == keyboard.KEY_UP:
+            key_actions[e.name]()  # Call the corresponding action function
+        elif (e.name == '1' or e.name == '2' or e.name == '3' or e.name == '4' or e.name == '5' or e.name == '6' or e.name == '7' or e.name == '8' or e.name == '9' or e.name == '0') and e.event_type == keyboard.KEY_UP:
             input_event(int(e.name), False, False, decimal_press)
         elif (e.name == '.'  or e.name == 'decimal') and e.event_type == keyboard.KEY_UP:
             input_event(0, False, True, decimal_press)
@@ -170,7 +348,7 @@ def calculator():
         button.grid(row= row + 1, column=col)
 
     basic_operations = [
-         "DEL", "AC", "  +  ", "  -  ", "  x  ", "  /  ", "ANS", " = "
+         "   ", "AC", "  +  ", "  -  ", "  x  ", "  /  ", "ANS", " = "
     ]
     for i, button_text in enumerate(basic_operations):
         row = i // 2
